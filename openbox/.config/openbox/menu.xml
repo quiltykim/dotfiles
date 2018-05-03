@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openbox_menu xmlns="http://openbox.org/3.4/menu">
+	<menu id="apps-accessories-menu" label="Accessories">
+		<item label="Calculator">
+			<action name="Execute">
+				<command>gnome-calculator</command>
+				<startupnotify>
+					<enabled>yes</enabled>
+				</startupnotify>
+			</action>
+		</item>
+		<item label="Ark File Archiver">
+			<action name="Execute">
+				<command>ark</command>
+				<startupnotify>
+					<enabled>yes</enabled>
+				</startupnotify>
+			</action>
+		</item>
+	</menu>
+	<menu id="apps-editors-menu" label="Editors">
+		<item label="GEdit">
+			<action name="Execute">
+				<command>gedit</command>
+				<startupnotify>
+					<enabled>yes</enabled>
+				</startupnotify>
+			</action>
+		</item>
+		<item label="GVim">
+			<action name="Execute">
+				<command>gvim</command>
+				<startupnotify>
+					<enabled>yes</enabled>
+					<wmclass>GVim</wmclass>
+				</startupnotify>
+			</action>
+		</item>
+		<item label="Emacs">
+			<action name="Execute">
+				<command>emacs</command>
+				<startupnotify>
+					<enabled>yes</enabled>
+					<wmclass>Emacs</wmclass>
+				</startupnotify>
+			</action>
+		</item>
+	</menu>
+	<menu id="apps-term-menu" label="Terminals">
+		<item label="Terminator">
+			<action name="Execute">
+				<command>terminator</command>
+				<startupnotify>
+					<enabled>yes</enabled>
+				</startupnotify>
+			</action>
+		</item>
+	</menu>
+	<menu id="apps-net-menu" label="Internet">
+		<item label="Firefox">
+			<action name="Execute">
+				<command>firefox</command>
+				<startupnotify>
+					<enabled>yes</enabled>
+					<wmclass>Firefox</wmclass>
+				</startupnotify>
+			</action>
+		</item>
+		<item label="Midori">
+			<action name="Execute">
+				<execute>midori</execute>
+			</action>
+		</item>
+	</menu>
+	<menu id="apps-office-menu" label="Office">
+		<item label="OpenOffice Base">
+			<action name="Execute">
+				<command>ooffice -base</command>
+			</action>
+		</item>
+		<item label="OpenOffice Calc">
+			<action name="Execute">
+				<command>ooffice -calc</command>
+			</action>
+		</item>
+		<item label="OpenOffice Draw">
+			<action name="Execute">
+				<command>ooffice -draw</command>
+			</action>
+		</item>
+		<item label="OpenOffice Impress">
+			<action name="Execute">
+				<command>ooffice -impress</command>
+			</action>
+		</item>
+		<item label="OpenOffice Math">
+			<action name="Execute">
+				<command>ooffice -math</command>
+			</action>
+		</item>
+		<item label="OpenOffice Printer Administration">
+			<action name="Execute">
+				<command>ooffice-printeradmin</command>
+			</action>
+		</item>
+		<item label="OpenOffice Writer">
+			<action name="Execute">
+				<command>ooffice -writer</command>
+			</action>
+		</item>
+	</menu>
+	<menu id="apps-fileman-menu" label="File Managers">
+		<item label="PCManFM">
+			<action name="Execute">
+				<command>pcmanfm</command>
+				<startupnotify>
+					<enabled>yes</enabled>
+				</startupnotify>
+			</action>
+		</item>
+	</menu>
+	<menu id="apps-graphics-menu" label="Graphics">
+		<item label="Gimp">
+			<action name="Execute">
+				<command>gimp</command>
+				<startupnotify>
+					<enabled>yes</enabled>
+				</startupnotify>
+			</action>
+		</item>
+	</menu>
+	<menu id="system-menu" label="System">
+		<item label="Openbox Configuration Manager">
+			<action name="Execute">
+				<command>obconf</command>
+				<startupnotify>
+					<enabled>yes</enabled>
+				</startupnotify>
+			</action>
+		</item>
+		<item label="Manage Cups Printers">
+			<action name="Execute">
+				<command>xdg-open http://localhost:631/</command>
+				<startupnotify>
+					<enabled>no</enabled>
+					<icon>cups</icon>
+				</startupnotify>
+			</action>
+		</item>
+		<separator/>
+		<item label="Reconfigure Openbox">
+			<action name="Reconfigure"/>
+		</item>
+	</menu>
+	<menu id="root-menu" label="Openbox 3">
+		<item label="Openbox Menu">
+			<action name="Execute">
+				<command>sudo obmenu</command>
+			</action>
+		</item>
+		<separator label="Applications"/>
+		<menu id="apps-accessories-menu"/>
+		<menu id="apps-editors-menu"/>
+		<menu id="apps-graphics-menu"/>
+		<menu id="apps-net-menu"/>
+		<menu id="apps-term-menu"/>
+		<menu id="apps-fileman-menu"/>
+		<menu id="system-menu"/>
+		<menu id="exit-menu" label="Exit">
+			<item label="Log Out">
+				<action name="Execute">
+					<command>openbox --exit</command>
+				</action>
+			</item>
+			<item label="Shutdown">
+				<action name="Execute">
+					<command>systemctl poweroff</command>
+				</action>
+			</item>
+			<item label="Restart">
+				<action name="Execute">
+					<command>systemctl reboot</command>
+				</action>
+			</item>
+			<item label="Suspend">
+				<action name="Execute">
+					<command>systemctl suspend</command>
+				</action>
+			</item>
+			<item label="Hibernate">
+				<action name="Execute">
+					<command>systemctl hibernate</command>
+				</action>
+			</item>
+		</menu>
+	</menu>
+</openbox_menu>
