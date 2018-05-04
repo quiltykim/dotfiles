@@ -50,7 +50,7 @@
  '(js-indent-level 2)
  '(package-selected-packages
    (quote
-    (evil-commentary prettier-js smart-mode-line dockerfile-mode go-mode yaml-mode php-mode vue-mode elpy company auto-complete evil-magit web-mode magit multi-term fic-mode rjsx-mode nyan-mode nlinum-relative evil))))
+    (emmet-mode company-jedi evil-commentary prettier-js smart-mode-line dockerfile-mode go-mode yaml-mode php-mode vue-mode elpy company auto-complete evil-magit web-mode magit multi-term fic-mode rjsx-mode nyan-mode nlinum-relative evil))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -59,19 +59,6 @@
  )
 
 ;;; THIS IS THE PART THAT WILL CHECK FOR UNINSTALLED PACKAGES AND INSTALL THEM!!!!
-
-;; Define functions
-(defun jay/install-unless-present (package)
-  "Install PACKAGE unless it's present already.
-PACKAGE is a symbol"
-  (unless (require package nil 'noerror)
-    (package-install package)
-    (require package)))
-(defun jay/early-install ()
-  "Installation of very early packages we absolutely need."
-  (jay/install-unless-present 'use-package))
-;; Call functions
-(jay/early-install)
 
 (require 'use-package)
 ;;;; Package Definitions
@@ -138,6 +125,10 @@ PACKAGE is a symbol"
 (require 'ido)
 (ido-mode t)
 
+(use-package emmet-mode
+  :ensure t
+  :commands emmet-mode)
+
 (use-package rjsx-mode
   :ensure t
   ;; disabled js2-mode for rjsx-mode
@@ -167,9 +158,10 @@ PACKAGE is a symbol"
 
 ;;; Vue mode
 ;; TODO finish block
-;; (use-package vue-mode
-;;   :mode "\\.vue\\'"
-;;   )
+(use-package vue-mode
+  :mode "\\.vue\\'"
+  :ensure t
+  )
 
 (setq scroll-step 1
       auto-window-vscroll nil
@@ -208,3 +200,26 @@ PACKAGE is a symbol"
   ;; We can't do squat
   (message "You don't have any good fonts installed!")))
 
+(use-package dockerfile-mode
+  :ensure 
+)
+(add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
+
+;;;;; Company
+(use-package company
+  :diminish (company-mode . "com")
+  :config
+  (add-hook 'after-init-hook 'global-company-mode)
+  (setq company-global-modes '(not erc-mode)))
+(use-package company-jedi
+  :after company
+  :config
+  (defun jay/python-mode-hook ()
+    (add-to-list 'company-backends 'company-jedi))
+  (add-hook 'python-mode-hook 'jay/python-mode-hook)
+  ;; Use python3 by default!
+  (when (executable-find "python3")
+    (setq jedi:environment-root "jedi-python3")
+    (setq jedi:environment-virtualenv
+          (append python-environment-virtualenv
+                  `("--python" ,(executable-find "python3"))))))
