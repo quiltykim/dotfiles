@@ -223,3 +223,18 @@
     (setq jedi:environment-virtualenv
           (append python-environment-virtualenv
                   `("--python" ,(executable-find "python3"))))))
+
+;;;;; Time
+(use-package time
+  :config
+  (display-time-mode t)
+  (setq display-time-mail-string ""))
+
+;; no scrollbar
+(when window-system
+  (scroll-bar-mode -1)
+  (when (boundp 'horizontal-scroll-bar-mode)
+    (horizontal-scroll-bar-mode -1)))
+
+;; Titlebar
+(setq frame-title-format "'nothing to see' - %b")
