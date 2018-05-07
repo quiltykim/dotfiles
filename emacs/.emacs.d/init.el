@@ -50,7 +50,7 @@
  '(js-indent-level 2)
  '(package-selected-packages
    (quote
-    (emmet-mode company-jedi evil-commentary prettier-js smart-mode-line dockerfile-mode go-mode yaml-mode php-mode vue-mode elpy company auto-complete evil-magit web-mode magit multi-term fic-mode rjsx-mode nyan-mode nlinum-relative evil))))
+    (ng2-mode smart-mode-line-powerline-theme emmet-mode company-jedi evil-commentary prettier-js smart-mode-line dockerfile-mode go-mode yaml-mode php-mode vue-mode elpy company auto-complete evil-magit web-mode magit multi-term fic-mode rjsx-mode nyan-mode nlinum-relative evil))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -83,26 +83,6 @@
   )
 
 
-;; powerline configs
-(use-package smart-mode-line
-  :config
-  (setq
-   sml/no-confirm-load-theme t
-   powerline-arrow-shape 'curve
-   powerline-default-separator-dir '(right . left)
-
-   sml/theme 'respectful
-   column-number-mode t
-   ;; These seem to cause memory issues...
-   sml/shorten-directory nil
-   sml/shorten-modes nil
-   sml/name-width 20
-   sml/mode-width 'full
-   nyan-bar-length 20))
-
-(use-package nyan-mode
-  :init
-  (nyan-mode 1))
 
 ;; Term config
 (use-package multi-term
@@ -162,6 +142,13 @@
   :mode "\\.vue\\'"
   :ensure t
   )
+
+;;; Angular2 mode
+(use-package ng2-mode
+  :ensure t
+  :mode "\\.ts\\'"
+)
+
 
 (setq scroll-step 1
       auto-window-vscroll nil
@@ -238,3 +225,33 @@
 
 ;; Titlebar
 (setq frame-title-format "'nothing to see' - %b")
+
+;;;;; Modeline
+
+(use-package smart-mode-line
+  :init
+  (setq
+   sml/no-confirm-load-theme t
+   powerline-arrow-shape 'curve
+   powerline-default-separator-dir '(right . left)
+
+   sml/theme 'respectful
+   column-number-mode t
+   ;; settings might cause memory issues
+   sml/shorten-directory t
+   sml/shorten-modes nil
+   sml/name-width 20
+   sml/mode-width 'full)
+  :config
+  (custom-set-faces)
+  (sml/setup)
+  (add-to-list 'sml/replacer-regexp-list '("^~/dotfiles/emacs/\\.emacs\\.d/" ":JED:")))
+
+(use-package smart-mode-line-powerline-theme :defer t)
+
+(use-package nyan-mode
+  :config
+  (setq nyan-bar-length 20)
+  (nyan-mode 1))
+
+;;;; end modeline
