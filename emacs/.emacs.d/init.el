@@ -50,7 +50,7 @@
  '(js-indent-level 2)
  '(package-selected-packages
    (quote
-    (ng2-mode smart-mode-line-powerline-theme emmet-mode company-jedi evil-commentary prettier-js smart-mode-line dockerfile-mode go-mode yaml-mode php-mode vue-mode elpy company auto-complete evil-magit web-mode magit multi-term fic-mode rjsx-mode nyan-mode nlinum-relative evil))))
+    (lua-mode flycheck tide ng2-mode smart-mode-line-powerline-theme emmet-mode company-jedi evil-commentary prettier-js smart-mode-line dockerfile-mode go-mode yaml-mode php-mode vue-mode elpy company auto-complete evil-magit web-mode magit multi-term fic-mode rjsx-mode nyan-mode nlinum-relative evil))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -112,17 +112,52 @@
 (use-package rjsx-mode
   :ensure t
   ;; disabled js2-mode for rjsx-mode
-  :mode "\\.js\\'"
+  :mode "\\.*js\\'"
   :config
   (defun rjsx-mode-config ()
     "Configure RJSX Mode"
     (define-key rjsx-mode-map (kbd "C-j") 'rjsx-delete-creates-full-tag))
   (add-hook 'rjsx-mode-hook 'rjsx-mode-config))
+
 ;; (add-to-list 'auto-mode-alist '("components\\/.*\\.js\\'" . rjsx-mode))
 
-(use-package prettier-js
-  :init
-  (add-hook 'rjsx-mode-hook 'prettier-js-mode))
+;; tide/typescript package
+(defun setup-tide-mode ()
+  (interactive)
+  (tide-setup)
+  (flycheck-mode +1)
+(setq tide-format-options '(:insertSpaceAfterFunctionKeywordForAnonymousFunctions t :placeOpenBraceOnNewLineForFunctions nil))
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+  (eldoc-mode +1)
+  (tide-hl-identifier-mode +1)
+  ;; company is an optional dependency. You have to
+  ;; install it separately via package-install
+  ;; `M-x package-install [ret] company`
+  (company-mode +1))
+
+;; aligns annotation to the right hand side
+(setq company-tooltip-align-annotations t)
+
+;; formats the buffer before saving
+(add-hook 'before-save-hook 'tide-format-before-save)
+
+(add-hook 'typescript-mode-hook #'setup-tide-mode)
+(use-package tide
+  :ensure t
+  :mode "\\.ts\\'"
+  :after (typescript-mode company flycheck)
+  :hook ((typescript-mode . tide-setup)
+         (typescript-mode . tide-hl-identifier-mode)
+         (before-save . tide-format-before-save)))
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
+(add-hook 'web-mode-hook
+          (lambda ()
+            (when (string-equal "tsx" (file-name-extension buffer-file-name))
+              (setup-tide-mode))))
+;; enable typescript-tslint checker
+;; (flycheck-add-mode 'typescript-tslint 'web-mode)
+
+
 
 
 ;;; Web mode:
@@ -136,6 +171,9 @@
               (flycheck-add-mode 'html-tidy 'web-mode)
               (flycheck-mode))))
 
+(use-package prettier-js
+  :init
+  (add-hook 'rjsx-mode-hook 'prettier-js-mode))
 ;;; Vue mode
 ;; TODO finish block
 (use-package vue-mode
@@ -144,10 +182,10 @@
   )
 
 ;;; Angular2 mode
-(use-package ng2-mode
-  :ensure t
-  :mode "\\.ts\\'"
-)
+;; (use-package ng2-mode
+;;   :ensure t
+;;   :mode "\\.ts\\'"
+;; )
 
 
 (setq scroll-step 1
