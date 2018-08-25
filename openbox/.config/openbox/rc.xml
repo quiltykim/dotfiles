@@ -322,6 +322,11 @@
         <command>emacs</command>
       </action>
     </keybind>
+    <keybind key="W-f">
+      <action name="Execute">
+        <command>firefox</command>
+      </action>
+    </keybind>
       <keybind key="W-b">
       <action name="Execute">
         <command>firefox</command>
@@ -340,11 +345,6 @@
      <keybind key="W-h">
       <action name="Execute">
         <command>hexchat</command>
-      </action>
-    </keybind>
-    <keybind key="W-t">
-      <action name="Execute">
-        <command>tmux</command>
       </action>
     </keybind>
    <keybind key="W-e">
@@ -394,7 +394,7 @@
         <execute>scrot -s -e 'mv $f ~/Pictures/'</execute>
       </action>
     </keybind>
-    <keybind key="C-Return">
+    <keybind key="W-t">
       <action name="Execute">
         <execute>terminator</execute>
       </action>

@@ -21,12 +21,12 @@
 
 
 
-;; (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 ;; ;; themes
-;; (load-theme 'solarized t)
-;; (set-frame-parameter nil 'background-mode 'dark)
-;; (set-terminal-parameter nil 'background-mode 'dark)
-;; (enable-theme 'solarized)
+(load-theme 'solarized t)
+(set-frame-parameter nil 'background-mode 'dark)
+(set-terminal-parameter nil 'background-mode 'dark)
+(enable-theme 'solarized)
 
 
 ;; Toolbars
@@ -41,6 +41,9 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(company-minimum-prefix-length 2)
+ '(custom-safe-themes
+   (quote
+    ("8db4b03b9ae654d4a57804286eb3e332725c84d7cdab38463cb6b97d5762ad26" default)))
  '(electric-indent-mode nil)
  '(electric-pair-mode t)
  '(emmet-preview-default t)
@@ -50,7 +53,7 @@
  '(js-indent-level 2)
  '(package-selected-packages
    (quote
-    (lua-mode flycheck tide ng2-mode smart-mode-line-powerline-theme emmet-mode company-jedi evil-commentary prettier-js smart-mode-line dockerfile-mode go-mode yaml-mode php-mode vue-mode elpy company auto-complete evil-magit web-mode magit multi-term fic-mode rjsx-mode nyan-mode nlinum-relative evil))))
+    (merlin lua-mode flycheck ng2-mode smart-mode-line-powerline-theme emmet-mode company-jedi evil-commentary prettier-js smart-mode-line dockerfile-mode go-mode yaml-mode php-mode vue-mode elpy company auto-complete evil-magit web-mode magit multi-term fic-mode rjsx-mode nyan-mode nlinum-relative evil))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -82,6 +85,50 @@
   (nlinum-relative-setup-evil)                    ;; setup for evil - that is, absolute numbering in insert mode
   )
 
+;;; flycheck-config.el --- My personal Flycheck Config File
+
+;;; Commentary:
+;; Flycheck specific configs
+
+;;; Code:
+
+(use-package flycheck
+  :defer t
+  :init
+  (defun turn-on-flycheck ()
+    "Force enables flycheck."
+    (interactive)
+    (flycheck-mode 1))
+  ;; turn on flycheck mode
+  (unless (or (eq system-type 'cygwin)
+              (string= (system-name) "gilly"))
+    (add-hook 'prog-mode-hook #'turn-on-flycheck)
+    (add-hook 'yaml-mode-hook #'turn-on-flycheck))
+
+  :config
+  (setq flycheck-idle-change-delay 1.5
+        flycheck-highlighting-mode 'lines)
+
+  ;; Use current Emacs load path
+  (setq-default flycheck-emacs-lisp-load-path 'inherit)
+
+  (add-hook 'c++-mode-hook
+	          (lambda ()
+		          ;; Make sure we're building with cpp 14
+		          (setq flycheck-gcc-language-standard "c++14"
+			              flycheck-clang-language-standard "c++14")))
+
+
+  ;; Set flycheck to use pylint3 when possible
+  (when (executable-find "pylint3")
+    (setq flycheck-python-pylint-executable "pylint3"))
+  (flycheck-add-next-checker 'python-flake8 'python-pylint)
+
+  ;; Don't check on a newline
+  (setq flycheck-check-syntax-automatically
+        (delete 'new-line flycheck-check-syntax-automatically)))
+
+;;; flycheck-config.el ends here
 
 
 ;; Term config
@@ -112,7 +159,7 @@
 (use-package rjsx-mode
   :ensure t
   ;; disabled js2-mode for rjsx-mode
-  :mode "\\.*js\\'"
+  :mode "\\.jsx?\\'"
   :config
   (defun rjsx-mode-config ()
     "Configure RJSX Mode"
@@ -121,44 +168,16 @@
 
 ;; (add-to-list 'auto-mode-alist '("components\\/.*\\.js\\'" . rjsx-mode))
 
-;; tide/typescript package
-(defun setup-tide-mode ()
-  (interactive)
-  (tide-setup)
-  (flycheck-mode +1)
-(setq tide-format-options '(:insertSpaceAfterFunctionKeywordForAnonymousFunctions t :placeOpenBraceOnNewLineForFunctions nil))
-  (setq flycheck-check-syntax-automatically '(save mode-enabled))
-  (eldoc-mode +1)
-  (tide-hl-identifier-mode +1)
-  ;; company is an optional dependency. You have to
-  ;; install it separately via package-install
-  ;; `M-x package-install [ret] company`
-  (company-mode +1))
-
-;; aligns annotation to the right hand side
-(setq company-tooltip-align-annotations t)
-
-;; formats the buffer before saving
-(add-hook 'before-save-hook 'tide-format-before-save)
-
-(add-hook 'typescript-mode-hook #'setup-tide-mode)
+(use-package typescript-mode
+  :ensure t
+  :mode "\\.tsx?\\'"
+)
 (use-package tide
   :ensure t
-  :mode "\\.ts\\'"
   :after (typescript-mode company flycheck)
   :hook ((typescript-mode . tide-setup)
          (typescript-mode . tide-hl-identifier-mode)
          (before-save . tide-format-before-save)))
-(add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
-(add-hook 'web-mode-hook
-          (lambda ()
-            (when (string-equal "tsx" (file-name-extension buffer-file-name))
-              (setup-tide-mode))))
-;; enable typescript-tslint checker
-;; (flycheck-add-mode 'typescript-tslint 'web-mode)
-
-
-
 
 ;;; Web mode:
 (use-package web-mode
@@ -226,7 +245,7 @@
   (message "You don't have any good fonts installed!")))
 
 (use-package dockerfile-mode
-  :ensure 
+  :ensure
 )
 (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
 

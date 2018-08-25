@@ -52,3 +52,5 @@ export PATH=$PATH:$ANDROID_HOME/tools export PATH=$PATH:$ANDROID_HOME/platform-t
 export GPG_TTY=$(tty)
 # to prevent react scripts from opening browser
 export BROWSER=none
+#for cs50 library
+export LD_LIBRARY_PATH=/usr/local/lib
