@@ -3,6 +3,7 @@
 
 
 (add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.vue$" . web-mode))
 
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
 (package-initialize)
@@ -53,7 +54,12 @@
  '(js-indent-level 2)
  '(package-selected-packages
    (quote
-    (merlin lua-mode flycheck ng2-mode smart-mode-line-powerline-theme emmet-mode company-jedi evil-commentary prettier-js smart-mode-line dockerfile-mode go-mode yaml-mode php-mode vue-mode elpy company auto-complete evil-magit web-mode magit multi-term fic-mode rjsx-mode nyan-mode nlinum-relative evil))))
+    (sass-mode pug-mode haskell-mode tuareg merlin lua-mode flycheck ng2-mode smart-mode-line-powerline-theme emmet-mode company-jedi evil-commentary prettier-js smart-mode-line dockerfile-mode go-mode yaml-mode php-mode vue-mode elpy company auto-complete evil-magit web-mode magit multi-term fic-mode rjsx-mode nyan-mode nlinum-relative evil)))
+ '(pug-tab-width 2)
+ '(python-indent-offset 2)
+ '(tide-format-options nil)
+ '(typescript-indent-level 2)
+ '(web-mode-code-indent-offset 2))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -100,15 +106,15 @@
     (interactive)
     (flycheck-mode 1))
   ;; turn on flycheck mode
-  (unless (or (eq system-type 'cygwin)
-              (string= (system-name) "gilly"))
-    (add-hook 'prog-mode-hook #'turn-on-flycheck)
-    (add-hook 'yaml-mode-hook #'turn-on-flycheck))
+  (add-hook 'prog-mode-hook #'turn-on-flycheck)
+  (add-hook 'yaml-mode-hook #'turn-on-flycheck)
 
   :config
   (setq flycheck-idle-change-delay 1.5
         flycheck-highlighting-mode 'lines)
 
+  (flycheck-add-mode 'html-tidy 'web-mode)
+  (flycheck-add-mode 'javascript-eslint 'rjsx-mode)
   ;; Use current Emacs load path
   (setq-default flycheck-emacs-lisp-load-path 'inherit)
 
@@ -128,6 +134,19 @@
   (setq flycheck-check-syntax-automatically
         (delete 'new-line flycheck-check-syntax-automatically)))
 
+
+;; use local eslint from node_modules before global
+;; http://emacs.stackexchange.com/questions/21205/flycheck-with-file-relative-eslint-executable
+(defun my/use-eslint-from-node-modules ()
+  (let* ((root (locate-dominating-file
+                (or (buffer-file-name) default-directory)
+                "node_modules"))
+         (eslint (and root
+                      (expand-file-name "node_modules/eslint/bin/eslint.js"
+                                        root))))
+    (when (and eslint (file-executable-p eslint))
+      (setq-local flycheck-javascript-eslint-executable eslint))))
+(add-hook 'flycheck-mode-hook #'my/use-eslint-from-node-modules)
 ;;; flycheck-config.el ends here
 
 
@@ -173,11 +192,14 @@
   :mode "\\.tsx?\\'"
 )
 (use-package tide
+  :config
+(setq tide-format-options '(:indentSize 2))
   :ensure t
   :after (typescript-mode company flycheck)
   :hook ((typescript-mode . tide-setup)
          (typescript-mode . tide-hl-identifier-mode)
          (before-save . tide-format-before-save)))
+
 
 ;;; Web mode:
 (use-package web-mode
@@ -187,7 +209,6 @@
               (setq web-mode-style-padding 2)
               ;; (yas-minor-mode t)
               (emmet-mode)
-              (flycheck-add-mode 'html-tidy 'web-mode)
               (flycheck-mode))))
 
 (use-package prettier-js
@@ -195,10 +216,10 @@
   (add-hook 'rjsx-mode-hook 'prettier-js-mode))
 ;;; Vue mode
 ;; TODO finish block
-(use-package vue-mode
-  :mode "\\.vue\\'"
-  :ensure t
-  )
+;; (use-package vue-mode
+;;   :mode "\\.vue\\'"
+;;   :ensure t
+;;   )
 
 ;;; Angular2 mode
 ;; (use-package ng2-mode
@@ -206,6 +227,11 @@
 ;;   :mode "\\.ts\\'"
 ;; )
 
+(load "/home/qkay/.opam/4.06.0/share/emacs/site-lisp/tuareg-site-file")
+
+;; haskell mode
+(use-package haskell-mode
+)
 
 (setq scroll-step 1
       auto-window-vscroll nil

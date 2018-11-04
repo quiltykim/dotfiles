@@ -30,12 +30,14 @@ alias vi='emacs -nw'
 alias emacs='emacs'
 export EDITOR=nvim
 alias pb='curl -F c=@- https://ptpb.pw/'
+alias rm_nodemod='find ~/code "node_modules" -exec rm -rf "{}" +'
 # below from http://www.thegeekstuff.com/2008/10/6-awesome-linux-cd-command-hacks-productivity-tip3-for-geeks/
 alias ..="cd .."
 alias ..2="cd ../.."
 alias ..3="cd ../../.."
 alias ..4="cd ../../../.."
 alias ..5="cd ../../../../.."
+alias bsync='browser-sync -f . --no-open'
 function mkdircd () { mkdir -p "$@" && eval cd "\"\$$#\""; }
 
 export NVM_DIR="$HOME/.nvm"
